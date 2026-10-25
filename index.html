@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureScan - Automated Web Vulnerability Scanner</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-theme="dark">
+    <header class="navbar">
+        <div class="logo">
+            <span class="shield-icon">🛡️</span>
+            <span class="logo-text">Secure<span>Scan</span></span>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#scanner">Scanner</a></li>
+                <li><a href="#vulnerabilities">OWASP Top 10</a></li>
+                <li><a href="#reports">Reports</a></li>
+            </ul>
+        </nav>
+        <button id="theme-toggle" class="btn btn-secondary btn-sm">🌙 Dark Mode</button>
+    </header>
+
+    <main>
+        <!-- Hero & Scanner Input Section -->
+        <section id="scanner" class="hero-section">
+            <div class="hero-header">
+                <span class="badge">OWASP Top 10 Aligned</span>
+                <h1>Automated Web Vulnerability Scanner</h1>
+                <p>Run quick automated security checks and generate instant triage reports for web applications.</p>
+            </div>
+
+            <div class="scanner-card">
+                <form id="scan-form">
+                    <div class="input-group">
+                        <span class="input-prefix">https://</span>
+                        <input type="text" id="target-url" placeholder="example.com/api/v1" required>
+                        <button type="submit" class="btn btn-primary" id="scan-btn">
+                            <span class="btn-text">Start Scan</span>
+                            <span class="spinner" id="btn-spinner" style="display: none;"></span>
+                        </button>
+                    </div>
+                    <div class="scan-options">
+                        <label><input type="checkbox" checked> SQL Injection (SQLi)</label>
+                        <label><input type="checkbox" checked> Cross-Site Scripting (XSS)</label>
+                        <label><input type="checkbox" checked> CSRF & Headers</label>
+                        <label><input type="checkbox" checked> Broken Auth</label>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Live Scan Console -->
+        <section id="terminal-section" class="terminal-container" style="display: none;">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <div class="terminal-title">SecureScan Engine v2.4 - Console Output</div>
+            </div>
+            <div class="terminal-body" id="terminal-log">
+                <!-- Log output dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Dashboard / Triage Metrics -->
+        <section id="dashboard" class="dashboard-section">
+            <h2>Security Triage Dashboard</h2>
+            <div class="metrics-grid">
+                <div class="metric-card critical">
+                    <div class="metric-value" id="count-critical">2</div>
+                    <div class="metric-label">Critical</div>
+                </div>
+                <div class="metric-card high">
+                    <div class="metric-value" id="count-high">4</div>
+                    <div class="metric-label">High</div>
+                </div>
+                <div class="metric-card medium">
+                    <div class="metric-value" id="count-medium">7</div>
+                    <div class="metric-label">Medium</div>
+                </div>
+                <div class="metric-card low">
+                    <div class="metric-value" id="count-low">12</div>
+                    <div class="metric-label">Low / Info</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vulnerabilities List -->
+        <section id="vulnerabilities" class="vuln-section">
+            <div class="section-header">
+                <h2>Detected Vulnerabilities</h2>
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="critical">Critical</button>
+                    <button class="filter-btn" data-filter="high">High</button>
+                    <button class="filter-btn" data-filter="medium">Medium</button>
+                </div>
+            </div>
+
+            <div class="vuln-list" id="vuln-list">
+                <div class="vuln-card critical-border" data-severity="critical">
+                    <div class="vuln-header">
+                        <span class="severity-badge critical">CRITICAL</span>
+                        <span class="owasp-tag">A03:2021 - Injection</span>
+                        <h3>SQL Injection in Search Endpoint</h3>
+                    </div>
+                    <p class="vuln-desc">Unsanitized user input in query parameter <code>?query=</code> permits arbitrary SQL command execution.</p>
+                    <div class="vuln-meta">
+                        <span><strong>Endpoint:</strong> <code>/api/v1/search</code></span>
+                        <span><strong>CWE:</strong> CWE-89</span>
+                    </div>
+                    <div class="remediation">
+                        <strong>Remediation:</strong> Use parameterized queries (prepared statements) and ORM abstraction layers.
+                    </div>
+                </div>
+
+                <div class="vuln-card high-border" data-severity="high">
+                    <div class="vuln-header">
+                        <span class="severity-badge high">HIGH</span>
+                        <span class="owasp-tag">A01:2021 - Broken Access Control</span>
+                        <h3>Reflected Cross-Site Scripting (XSS)</h3>
+                    </div>
+                    <p class="vuln-desc">Unescaped output rendered directly into HTML payload allows malicious JavaScript execution in browser context.</p>
+                    <div class="vuln-meta">
+                        <span><strong>Endpoint:</strong> <code>/user/profile</code></span>
+                        <span><strong>CWE:</strong> CWE-79</span>
+                    </div>
+                    <div class="remediation">
+                        <strong>Remediation:</strong> Implement context-aware output encoding and configure Content-Security-Policy (CSP) headers.
+                    </div>
+                </div>
+
+                <div class="vuln-card medium-border" data-severity="medium">
+                    <div class="vuln-header">
+                        <span class="severity-badge medium">MEDIUM</span>
+                        <span class="owasp-tag">A05:2021 - Security Misconfiguration</span>
+                        <h3>Missing Security Headers</h3>
+                    </div>
+                    <p class="vuln-desc">Target host is missing <code>Strict-Transport-Security (HSTS)</code> and <code>X-Content-Type-Options</code> headers.</p>
+                    <div class="vuln-meta">
+                        <span><strong>Endpoint:</strong> <code>/</code></span>
+                        <span><strong>CWE:</strong> CWE-693</span>
+                    </div>
+                    <div class="remediation">
+                        <strong>Remediation:</strong> Configure HTTP server response headers to include HSTS, CSP, and X-Frame-Options.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Export & Action Section -->
+        <section id="reports" class="reports-section">
+            <div class="reports-box">
+                <div>
+                    <h2>Generate OWASP Compliance Report</h2>
+                    <p>Export triage data into PDF, JSON, or CSV formats for engineering handoff.</p>
+                </div>
+                <div class="report-actions">
+                    <button class="btn btn-outline" id="export-json">Export JSON</button>
+                    <button class="btn btn-primary" id="export-report">Download Full Report</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 SecureScan Security Framework. Designed for fast triage & automated security assessment.</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
